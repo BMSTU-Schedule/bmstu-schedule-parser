@@ -1,8 +1,10 @@
-import requests
 import textwrap
-from bs4 import BeautifulSoup
-from .configs.config import *
 from datetime import datetime
+
+import requests
+from bs4 import BeautifulSoup
+
+from .configs.config import *
 
 
 class Subject:
@@ -59,15 +61,15 @@ def parseRow(cells, dayNumber, file):
 
         Lesson(timing, subjects).writeICSToFile(file)
 
-def run(url, semesterFirstMonday=None):
 
+def run(url, semesterFirstMonday):
     Subject.calculateSemesterStartDate(semesterFirstMonday)
 
     pageHTML = requests.get(url)
     soup = BeautifulSoup(pageHTML.content, 'lxml')
     groupName = soup.select_one('h1').string
-    
-    file = open(f'{groupName}.ics', 'w')
+
+    file = open('{}.ics'.format(groupName), 'w')
     file.writelines(textwrap.dedent(iCalHeader))
 
     for dayIndex, day in enumerate(soup.select('div.col-md-6.hidden-xs')):
