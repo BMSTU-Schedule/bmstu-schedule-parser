@@ -65,8 +65,9 @@ def run(url, semesterFirstMonday=None):
 
     pageHTML = requests.get(url)
     soup = BeautifulSoup(pageHTML.content, 'lxml')
-
-    file = open('result.ics', 'w')
+    groupName = soup.select_one('h1').string
+    
+    file = open(f'{groupName}.ics', 'w')
     file.writelines(textwrap.dedent(iCalHeader))
 
     for dayIndex, day in enumerate(soup.select('div.col-md-6.hidden-xs')):

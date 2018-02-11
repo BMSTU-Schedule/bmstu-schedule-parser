@@ -106,4 +106,5 @@ rebuild.sh
 
 
 # shit
-.idea/*
+.idea/
+.DS_Store
