@@ -1,5 +1,6 @@
 # <div align="center">BMSTU Schedule</div>
 ### This shit parse your EU schedule page and convert it to .ics format
+###### Required Python3.6 and upper
 #### installation:
 ```bash
 pip3 install bmstuSchedule
