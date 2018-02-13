@@ -1,18 +1,11 @@
-from termcolor import colored
-
-
-def selfMadeLogger(msg, level='INFO'):
-    print(colored(msg, 'red' if level != 'INFO' else 'green'))
-
-
 # time-section
 DATE_FORMAT = '%d-%m-%Y'
 
 # iCal section
 FULL_WEEKS = 17
 PART_WEEKS = 8
-iCalHeader = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN'
-iCalBody = \
+ICAL_HEADER = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN'
+ICAL_BODY = \
     '''
     BEGIN:VEVENT
     SUMMARY:{summary}
@@ -22,8 +15,8 @@ iCalBody = \
     LOCATION:{auditorium}
     DESCRIPTION:{professor}
     END:VEVENT'''
-iCalBottom = '\nEND:VCALENDAR'
+ICAL_BOTTOM = '\nEND:VCALENDAR'
 
 # bmstu
-mainURL = 'https://students.bmstu.ru'
-groupsListURL = '/schedule/list'
+MAIN_URL = 'https://students.bmstu.ru'
+GROUPS_LIST_URL = '/schedule/list'
