@@ -18,7 +18,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'bmstuSchedule = bmstuSchedule.__main__:main'
+            'bmstu-schedule = bmstu_schedule.__main__:main'
         ]
     },
 )
