@@ -90,7 +90,7 @@ def run(groupID, semesterFirstMonday):
         selfMadeLogger('There is no schedule for the group you specified.', 'ERROR')
         raise SystemExit
 
-    selfMadeLogger('Going to your schedule page')
+    selfMadeLogger('Going to your group schedule page')
     soup = BeautifulSoup(pageHTML.content, 'lxml')
     selfMadeLogger('Parsing your schedule')
     groupName = soup.select_one('h1').string
