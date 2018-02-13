@@ -1,24 +1,24 @@
 import re
 import textwrap
-from datetime import datetime
+from datetime import timedelta
 
 import requests
-from bs4 import BeautifulSoup
-
 from bmstuSchedule.configs.config import *
+from bs4 import BeautifulSoup
 
 
 class Subject:
+    semesterStartDate = None
 
-    @staticmethod
-    def calculateSemesterStartDate(beginningDate):
-        Subject.semesterStartDate = datetime.strptime(beginningDate, '%d-%m-%Y').timestamp()
+    @classmethod
+    def calculateSemesterStartDate(cls, beginningDate):
+        cls.semesterStartDate = beginningDate
 
     def __init__(self, info, subjectDayIndex, weeksInterval, denominator):
         self.name, self.auditorium, self.professor = info
-        timeShift = (denominator * 7 + subjectDayIndex) * SECONDS_IN_A_DAY
 
-        self.startDate = datetime.fromtimestamp(Subject.semesterStartDate + timeShift).strftime('%Y%m%d')
+        timeShift = denominator * 7 + subjectDayIndex
+        self.startDate = (Subject.semesterStartDate + timedelta(days=timeShift)).strftime('%Y%m%d')
         self.weeksInterval = weeksInterval
 
     def getInfo(self):
@@ -40,8 +40,9 @@ class Lesson:
                 endDate=subject.startDate,
                 endTime=self.endTime,
                 interval=subject.weeksInterval,
-                auditorium=subject.auditorium,
-                professor=subject.professor
+                count=FULL_WEEKS if subject.weeksInterval == 1 else PART_WEEKS,
+                auditorium=subject.auditorium or '',
+                professor=subject.professor or ''
             )
             file.write(textwrap.dedent(event))
 
@@ -63,9 +64,16 @@ def parseRow(cells, dayNumber, file):
         Lesson(timing, subjects).writeICSToFile(file)
 
 
+def requester(url):
+    try:
+        return requests.get(url)
+    except requests.exceptions.ConnectionError:
+        raise ConnectionError('No internet connection')
+
+
 def getUrlForGroup(groupID):
     selfMadeLogger('Going to schedules list page')
-    listPageResponse = requests.get(mainURL + groupsListURL)
+    listPageResponse = requester(mainURL + groupsListURL)
     selfMadeLogger('Parsing your group url')
     soup = BeautifulSoup(listPageResponse.content, 'lxml')
     groupHrefButton = soup.find('a', {'class': 'btn btn-sm btn-default text-nowrap'},
@@ -77,7 +85,7 @@ def run(groupID, semesterFirstMonday):
     Subject.calculateSemesterStartDate(semesterFirstMonday)
 
     try:
-        pageHTML = requests.get(getUrlForGroup(groupID))
+        pageHTML = requester(getUrlForGroup(groupID))
     except AttributeError:
         selfMadeLogger('There is no schedule for the group you specified.', 'ERROR')
         raise SystemExit

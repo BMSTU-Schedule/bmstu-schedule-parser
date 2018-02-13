@@ -6,10 +6,11 @@ def selfMadeLogger(msg, level='INFO'):
 
 
 # time-section
-semesterFirstMonday = '2018/02/05'
-SECONDS_IN_A_DAY = 86400
+DATE_FORMAT = '%d-%m-%Y'
 
 # iCal section
+FULL_WEEKS = 17
+PART_WEEKS = 8
 iCalHeader = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN'
 iCalBody = \
     '''
@@ -17,7 +18,7 @@ iCalBody = \
     SUMMARY:{summary}
     DTSTART:{startDate}T{startTime}
     DTEND:{endDate}T{endTime}
-    RRULE:FREQ=WEEKLY;INTERVAL={interval};UNTIL=20180601T000000;
+    RRULE:FREQ=WEEKLY;INTERVAL={interval};COUNT={count};
     LOCATION:{auditorium}
     DESCRIPTION:{professor}
     END:VEVENT'''
