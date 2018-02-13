@@ -2,7 +2,6 @@
 semesterFirstMonday = '2018/02/05'
 SECONDS_IN_A_DAY = 86400
 
-
 # iCal section
 iCalHeader = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN'
 iCalBody = \
@@ -16,3 +15,7 @@ iCalBody = \
     DESCRIPTION:{professor}
     END:VEVENT'''
 iCalBottom = '\nEND:VCALENDAR'
+
+# bmstu
+mainURL = 'https://students.bmstu.ru'
+groupsListURL = '/schedule/list'

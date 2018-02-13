@@ -1,20 +1,20 @@
 import argparse
 
-from bmstuSchedule import run
+from schedule import run
 
 
 def argConfig():
     parser = argparse.ArgumentParser(description='Bauman Moscow State Technical University EU Schedule iCal parser')
     parser.add_argument('-s', '--semester_first_monday', default='05-02-2018', type=str,
                         help='Semester first week monday date')
-    parser.add_argument('url', type=str, help='Schedule URL')
+    parser.add_argument('group', type=str, help='Group code')
     return parser
 
 
 def main(args=None):
     namespace = argConfig().parse_args(args)
     try:
-        run(namespace.url, namespace.semester_first_monday)
+        run(namespace.group, namespace.semester_first_monday)
     except Exception as ex:
         print(ex)
 

@@ -1,17 +1,18 @@
+import re
 import textwrap
 from datetime import datetime
 
 import requests
 from bs4 import BeautifulSoup
 
-from bmstuSchedule.configs.config import *
+from configs.config import *
 
 
 class Subject:
 
     @staticmethod
-    def calculateSemesterStartDate(semesterFirstMonday):
-        Subject.semesterStartDate = datetime.strptime(semesterFirstMonday, '%d-%m-%Y').timestamp()
+    def calculateSemesterStartDate(beginningDate):
+        Subject.semesterStartDate = datetime.strptime(beginningDate, '%d-%m-%Y').timestamp()
 
     def __init__(self, info, subjectDayIndex, weeksInterval, denominator):
         self.name, self.auditorium, self.professor = info
@@ -62,10 +63,18 @@ def parseRow(cells, dayNumber, file):
         Lesson(timing, subjects).writeICSToFile(file)
 
 
-def run(url, semesterFirstMonday):
+def getUrlForGroup(groupID):
+    listPageResponse = requests.get(mainURL + groupsListURL)
+    soup = BeautifulSoup(listPageResponse.content, 'lxml')
+    groupHrefButton = soup.find('a', {'class': 'btn btn-sm btn-default text-nowrap'},
+                                text=re.compile('.*{}.*'.format(groupID)))
+    return mainURL + groupHrefButton.attrs['href']
+
+
+def run(groupID, semesterFirstMonday):
     Subject.calculateSemesterStartDate(semesterFirstMonday)
 
-    pageHTML = requests.get(url)
+    pageHTML = requests.get(getUrlForGroup(groupID))
     soup = BeautifulSoup(pageHTML.content, 'lxml')
     groupName = soup.select_one('h1').string
 
