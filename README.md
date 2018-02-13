@@ -5,9 +5,9 @@
 pip3 install bmstuSchedule
 ```
 #### How to use:
-##### 1. Generate the result.isc file by passing the URL of your schedule
+##### 1. Generate the result.isc file by passing your group code
 ```bash
-bmstuSchedule https://students.bmstu.ru/schedule/62f3fb1a-a264-11e5-bd2f-005056960017
+bmstuSchedule иу6-44
 ```
 <img src="https://github.com/gabolaev/bmstuSchedule/blob/master/src/step1.png">
 
