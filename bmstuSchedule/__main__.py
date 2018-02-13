@@ -1,6 +1,6 @@
 import argparse
 
-from schedule import run
+from bmstuSchedule import run
 
 
 def argConfig():
@@ -14,7 +14,7 @@ def argConfig():
 def main(args=None):
     namespace = argConfig().parse_args(args)
     try:
-        run(namespace.group, namespace.semester_first_monday)
+        run(namespace.group.upper(), namespace.semester_first_monday)
     except Exception as ex:
         print(ex)
 

@@ -1,3 +1,10 @@
+from termcolor import colored
+
+
+def selfMadeLogger(msg, level='INFO'):
+    print(colored(msg, 'red' if level != 'INFO' else 'green'))
+
+
 # time-section
 semesterFirstMonday = '2018/02/05'
 SECONDS_IN_A_DAY = 86400

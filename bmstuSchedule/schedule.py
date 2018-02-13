@@ -5,7 +5,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from configs.config import *
+from bmstuSchedule.configs.config import *
 
 
 class Subject:
@@ -64,7 +64,9 @@ def parseRow(cells, dayNumber, file):
 
 
 def getUrlForGroup(groupID):
+    selfMadeLogger('Going to schedules list page')
     listPageResponse = requests.get(mainURL + groupsListURL)
+    selfMadeLogger('Parsing your group url')
     soup = BeautifulSoup(listPageResponse.content, 'lxml')
     groupHrefButton = soup.find('a', {'class': 'btn btn-sm btn-default text-nowrap'},
                                 text=re.compile('.*{}.*'.format(groupID)))
@@ -74,8 +76,15 @@ def getUrlForGroup(groupID):
 def run(groupID, semesterFirstMonday):
     Subject.calculateSemesterStartDate(semesterFirstMonday)
 
-    pageHTML = requests.get(getUrlForGroup(groupID))
+    try:
+        pageHTML = requests.get(getUrlForGroup(groupID))
+    except AttributeError:
+        selfMadeLogger('There is no schedule for the group you specified.', 'ERROR')
+        raise SystemExit
+
+    selfMadeLogger('Going to your schedule page')
     soup = BeautifulSoup(pageHTML.content, 'lxml')
+    selfMadeLogger('Parsing your schedule')
     groupName = soup.select_one('h1').string
 
     file = open('{}.ics'.format(groupName), 'w')
@@ -89,3 +98,5 @@ def run(groupID, semesterFirstMonday):
 
     file.write(textwrap.dedent(iCalBottom))
     file.close()
+    selfMadeLogger('Done!')
+    selfMadeLogger('Now you can import it.')
