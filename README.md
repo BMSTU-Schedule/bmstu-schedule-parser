@@ -11,7 +11,7 @@ bmstuSchedule https://students.bmstu.ru/schedule/62f3fb1a-a264-11e5-bd2f-0050569
 ```
 <img src="https://github.com/gabolaev/bmstuSchedule/blob/master/src/step1.png">
 
-##### 2. Open Google Calendar or any other that supports .ics import
+##### 2. Open Google Calendar or macOS Calendar or any other that supports .ics import
 
 <img src="https://github.com/gabolaev/bmstuSchedule/blob/master/src/step2.png">
 
