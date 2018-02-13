@@ -1,2 +1,2 @@
-from .bmstuSchedule import *
 from .configs import *
+from .schedule import *

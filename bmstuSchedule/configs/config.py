@@ -11,7 +11,7 @@ iCalBody = \
     SUMMARY:{summary}
     DTSTART:{startDate}T{startTime}
     DTEND:{endDate}T{endTime}
-    RRULE:FREQ=WEEKLY;INTERVAL={interval};
+    RRULE:FREQ=WEEKLY;INTERVAL={interval};UNTIL=20180601T000000;
     LOCATION:{auditorium}
     DESCRIPTION:{professor}
     END:VEVENT'''

@@ -4,7 +4,7 @@ from datetime import datetime
 import requests
 from bs4 import BeautifulSoup
 
-from .configs.config import *
+from bmstuSchedule.configs.config import *
 
 
 class Subject:
