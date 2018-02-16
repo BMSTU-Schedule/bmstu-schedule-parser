@@ -5,7 +5,7 @@
 pip3 install bmstu-schedule
 ```
 #### How to use:
-##### 1. Generate the result.isc file by passing your group code
+##### 1. Generate the "Расписание %YOUR_GROUP_CODE%.isc" file by passing your group code
 ```bash
 bmstu-schedule иу6-44
 ```
