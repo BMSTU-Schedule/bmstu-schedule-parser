@@ -14,8 +14,8 @@ def setup_parser():
     return parser
 
 def get_api_date():
-    r = requests.get(url='http://89.40.7.34/bmstu/')
-    self_made_logger.log('Fetching {}'.format("http://89.40.7.34/bmstu/"))
+    r = requests.get(url=configs.API_URL)
+    self_made_logger.log('Fetching {}'.format(configs.API_URL))
     return r.json()['semester_start_date']
 
 def date_parser(date):

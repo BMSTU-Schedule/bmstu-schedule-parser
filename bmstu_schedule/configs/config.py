@@ -1,5 +1,6 @@
 # time-section
 DATE_FORMAT = '%d-%m-%Y'
+API_URL='http://89.40.7.34/bmstu/
 
 # iCal section
 FULL_WEEKS = 17
