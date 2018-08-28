@@ -73,9 +73,9 @@ def get_url_for_group(group_id):
     list_page_response = requester(configs.MAIN_URL + configs.GROUPS_LIST_URL)
     self_made_logger.log('Parsing your group url')
     soup = bsoup(list_page_response.content, 'lxml')
-    group_href_button = soup.find('a', {'class': 'btn btn-sm btn-default text-nowrap'},
+    group_href_button = soup.find(re.compile('(a|span)'), {'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')},
                                   text=re.compile('.*{}.*'.format(group_id)))
-    self_made_logger.log('{} group found'.format(group_id))  
+    self_made_logger.log('{} group found'.format(group_id))
     return configs.MAIN_URL + group_href_button.attrs['href']
 
 
