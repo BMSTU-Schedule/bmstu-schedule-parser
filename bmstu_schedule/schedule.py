@@ -1,5 +1,6 @@
 import re
 import textwrap
+import sys
 from datetime import timedelta as tdelta
 
 import requests
@@ -12,15 +13,11 @@ class Subject:
     semester_start_date = None
 
     def __init__(self, info, subject_day_index, weeks_interval, denominator):
-        self.name, self.auditorium, self.professor = info
+        self.type, self.name, self.auditorium, self.professor = info
 
         time_shift = denominator * 7 + subject_day_index
         self.start_date = (self.semester_start_date + tdelta(days=time_shift)).strftime('%Y%m%d')
         self.weeks_interval = weeks_interval
-
-    def get_info(self):
-        return self.name, self.auditorium, self.professor, self.start_date, self.weeks_interval
-
 
 class Lesson:
 
@@ -31,7 +28,7 @@ class Lesson:
     def write_ics_to_file(self, file):
         for subject in self.subjects:
             event = configs.ICAL_BODY.format(
-                summary=subject.name,
+                summary='{} {}'.format(subject.type or '', subject.name),
                 startDate=subject.start_date,
                 startTime=self.start_time,
                 endDate=subject.start_date,
@@ -51,7 +48,7 @@ def parse_row(cells, day_number, file):
 
         for c in range(3, 5):
             try:
-                subjects.append(Subject((cells[c].contents[i].string for i in range(0, 5, 2)),
+                subjects.append(Subject((cells[c].contents[i].string for i in range(0, 7, 2)),
                                         day_number,
                                         weeks_interval=(2 if cells[3].attrs != {'colspan': '2'} else 1),
                                         denominator=bool(c // 4)))
@@ -86,7 +83,7 @@ def run(group_id, semester_first_monday, outdir):
         page_html = requester(get_url_for_group(group_id))
     except AttributeError:
         self_made_logger.log('There is no schedule for the group you specified.', 'ERROR')
-        raise SystemExit
+        sys.exit(-1)
 
     self_made_logger.log('Going to your group schedule page')
     soup = bsoup(page_html.content, 'lxml')
