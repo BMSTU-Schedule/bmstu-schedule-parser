@@ -9,6 +9,8 @@ def setup_parser():
 
     parser.add_argument('-s', '--semester_first_monday', default='', type=date_parser,
                         help='Semester first week monday date')
+    parser.add_argument('-o', '--outdir', default='.', type=str,
+                        help='Outdir path')
     parser.add_argument('group', type=str, help='Group code')
 
     return parser
@@ -30,7 +32,7 @@ def main():
     args = setup_parser().parse_args()
     self_made_logger.log("Semester start date: {}".format(args.semester_first_monday.date()))
     try:
-        run(args.group.upper(), args.semester_first_monday)
+        run(args.group.upper(), args.semester_first_monday, args.outdir)
     except ConnectionError as ex:
         self_made_logger.log(ex, 'ERROR')
 

@@ -79,7 +79,7 @@ def get_url_for_group(group_id):
     return configs.MAIN_URL + group_href_button.attrs['href']
 
 
-def run(group_id, semester_first_monday):
+def run(group_id, semester_first_monday, outdir):
     Subject.semester_start_date = semester_first_monday
 
     try:
@@ -93,16 +93,22 @@ def run(group_id, semester_first_monday):
     self_made_logger.log('Parsing your schedule')
     group_name = soup.select_one('h1').string
 
-    with open('{}.ics'.format(group_name), 'w', encoding='u8') as fp:
-        fp.writelines(textwrap.dedent(configs.ICAL_HEADER))
+    try:    
+        with open('{}/{}.ics'.format(outdir, group_name), 'w', encoding='u8') as fp:
+            fp.writelines(textwrap.dedent(configs.ICAL_HEADER))
 
-        for day_idx, day in enumerate(soup.select('div.col-md-6.hidden-xs')):
-            day_table = day.contents[1]
-            rows = day_table.findAll('tr')
-            for row in rows[2:]:
-                parse_row(row.contents, day_idx, fp)
+            for day_idx, day in enumerate(soup.select('div.col-md-6.hidden-xs')):
+                day_table = day.contents[1]
+                rows = day_table.findAll('tr')
+                for row in rows[2:]:
+                    parse_row(row.contents, day_idx, fp)
 
-        fp.write(textwrap.dedent(configs.ICAL_BOTTOM))
+            fp.write(textwrap.dedent(configs.ICAL_BOTTOM))
+    except FileNotFoundError:
+        self_made_logger.log('No such file or directory: {}'.format(outdir), 'ERROR')
+        return
+        
 
     self_made_logger.log('Done!')
+    self_made_logger.log('File saved at {}/{}.ics'.format(outdir, group_name))
     self_made_logger.log('Now you can import it.')
