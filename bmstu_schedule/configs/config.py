@@ -1,10 +1,10 @@
 # time-section
 DATE_FORMAT = '%d-%m-%Y'
-API_URL='http://89.40.7.34/bmstu/'
+API_URL = 'http://89.40.7.34/bmstu/'
 
 # iCal section
-FULL_WEEKS = 17
-PART_WEEKS = 8
+STABLE = 17
+PERIODIC = 8
 ICAL_HEADER = 'BEGIN:VCALENDAR\nVERSION:2.0\nCALSCALE:GREGORIAN'
 ICAL_BODY = \
     '''
