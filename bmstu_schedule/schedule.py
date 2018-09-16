@@ -87,7 +87,7 @@ def get_url_for_group(group_id):
     group_href_button = soup.find(
             re.compile('(a|span)'), {
                 'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')
-            }, text=re.compile('.*{}.*'.format(group_id)))
+            }, text=re.compile(r'.*\ {}.*'.format(group_id)))
 
     self_made_logger.log('{} group found'.format(group_id))
     return configs.MAIN_URL + group_href_button.attrs['href']
