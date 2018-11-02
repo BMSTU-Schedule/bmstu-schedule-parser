@@ -1,10 +1,11 @@
 import re
-import textwrap
 import sys
-import requests
-
-from bs4 import BeautifulSoup as bsoup
+import json
 from datetime import timedelta as tdelta
+
+import textwrap
+import requests
+from bs4 import BeautifulSoup as bsoup
 from bmstu_schedule import configs, logger as self_made_logger
 
 
@@ -61,7 +62,8 @@ def parse_row(cells, day_number, file):
                         weeks_interval=(
                             2 if cells[3].attrs != {
                                 'colspan': '2'
-                            } else 1),
+                            } else 1
+                        ),
                         denominator=bool(c // 4)
                     )
                 )
@@ -78,54 +80,102 @@ def requester(url):
         raise ConnectionError('No internet connection')
 
 
-def get_url_for_group(group_id):
+def group_code_formatter(group_url):
+    return group_url.text.lstrip()[:11].rstrip()
+
+
+def unload_all_groups(soup, outdir):
+    all_urls = soup.find_all(
+        'a', 'btn btn-sm btn-default text-nowrap')
+    urls_count = len(all_urls)
+    
+    mapping = []
+    for url_id, group_url_button in enumerate(all_urls):
+        try:
+            valid_group_code = group_code_formatter(group_url_button)
+            self_made_logger.log('Processing {} | {}/{} | [{}%]'.format(
+                valid_group_code,
+                url_id,
+                urls_count,
+                round(url_id / urls_count * 100, 2)
+            ))
+
+            url = configs.MAIN_URL + group_url_button['href']
+
+            yield (
+                valid_group_code,
+                url,
+            )
+
+            mapping.append({
+                "group": valid_group_code,
+                "url": url
+            })
+            if url_id == 4:
+                break
+        except Exception as ex:
+            self_made_logger.log((ex, url_id, group_url_button), level='ERROR')
+
+    with open(outdir + '/mapping.json', 'w', encoding='utf-8') as mapping_file:
+        mapping_file.write(json.dumps(mapping, ensure_ascii=False))
+
+
+def get_urls(group_code, outdir):
     self_made_logger.log('Going to schedules list page')
     list_page_response = requester(configs.MAIN_URL + configs.GROUPS_LIST_URL)
-    self_made_logger.log('Parsing your group url')
-
+    self_made_logger.log('Parsing your group(s) url(s)')
     soup = bsoup(list_page_response.content, 'lxml')
-    group_href_button = soup.find(
-            re.compile('(a|span)'), {
+
+    if group_code != configs.ALL_GROUPS_PARAM:
+        group_url_button = soup.find(
+            re.compile('a'), {
                 'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')
-            }, text=re.compile(r'.*\ {}.*'.format(group_id)))
+            }, text=re.compile(r'.*\ {}.*'.format(group_code))
+        )
+        valid_group_code = group_code_formatter(group_url_button)
+        self_made_logger.log('{} group found'.format(valid_group_code))
+        yield (
+            valid_group_code,
+            configs.MAIN_URL + group_url_button.attrs['href']
+        )
+    else:
+        for gcode, url in unload_all_groups(soup, outdir):
+            yield gcode, url
 
-    self_made_logger.log('{} group found'.format(group_id))
-    return configs.MAIN_URL + group_href_button.attrs['href']
 
-
-def run(group_id, semester_first_monday, outdir):
+def run(group_code, semester_first_monday, outdir):
     Subject.semester_start_date = semester_first_monday
 
-    try:
-        page_html = requester(get_url_for_group(group_id))
-    except AttributeError:
-        self_made_logger.log(
-            'There is no schedule for the group you specified.',
-            'ERROR')
-        sys.exit(-1)
+    for valid_group_code, url in get_urls(group_code, outdir):   
+        try:
+            page_html = requester(url)
+        except AttributeError:
+            self_made_logger.log(
+                'There is no schedule for the group you specified.',
+                'ERROR')
+            sys.exit(-1)
 
-    self_made_logger.log('Going to your group schedule page')
-    soup = bsoup(page_html.content, 'lxml')
-    self_made_logger.log('Parsing your schedule')
-    group_name = soup.select_one('h1').string
+        self_made_logger.log('Going to your group schedule page')
+        soup = bsoup(page_html.content, 'lxml')
+        self_made_logger.log('Parsing your schedule')
 
-    try:
-        filename = '{}/{}.ics'.format(outdir, group_name)
-        with open(filename, 'w', encoding='u8') as fp:
-            fp.writelines(textwrap.dedent(configs.ICAL_HEADER))
+        try:
+            filename = '{}/{}.ics'.format(outdir, valid_group_code)
+            with open(filename, 'w', encoding='u8') as fp:
+                fp.writelines(textwrap.dedent(configs.ICAL_HEADER))
 
-            for dID, day in enumerate(soup.select('div.col-md-6.hidden-xs')):
-                day_table = day.contents[1]
-                rows = day_table.findAll('tr')
-                for row in rows[2:]:
-                    parse_row(row.contents, dID, fp)
+                for dID, day in enumerate(soup.select('div.col-md-6.hidden-xs')):
+                    day_table = day.contents[1]
+                    rows = day_table.findAll('tr')
+                    for row in rows[2:]:
+                        parse_row(row.contents, dID, fp)
 
-            fp.write(textwrap.dedent(configs.ICAL_BOTTOM))
-    except FileNotFoundError:
-        self_made_logger.log(
-            'No such file or directory: {}'.format(outdir), 'ERROR')
-        return
+                fp.write(textwrap.dedent(configs.ICAL_BOTTOM))
+        except FileNotFoundError:
+            self_made_logger.log(
+                'No such file or directory: {}'.format(outdir), 'ERROR')
+            return
 
-    self_made_logger.log('Done!')
-    self_made_logger.log('File saved at {}/{}.ics'.format(outdir, group_name))
-    self_made_logger.log('Now you can import it.')
+        self_made_logger.log('Done!')
+        self_made_logger.log('File saved at {}/{}.ics'.format(outdir, valid_group_code))
+        self_made_logger.log('Now you can import it.')

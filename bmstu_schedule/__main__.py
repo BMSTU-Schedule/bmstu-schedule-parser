@@ -27,11 +27,15 @@ def setup_parser():
 
     parser.add_argument(
         'group',
-        type=str,
+        type=group_code_handler,
         help='Group code'
     )
 
     return parser
+
+
+def group_code_handler(group_code):
+    return group_code.upper() if group_code != configs.ALL_GROUPS_PARAM else group_code
 
 
 def get_api_date():
@@ -54,7 +58,7 @@ def main():
         "Semester start date: {}".format(args.semester_first_monday.date())
         )
     try:
-        run(args.group.upper(), args.semester_first_monday, args.outdir)
+        run(args.group, args.semester_first_monday, args.outdir)
     except ConnectionError as ex:
         self_made_logger.log(ex, 'ERROR')
 

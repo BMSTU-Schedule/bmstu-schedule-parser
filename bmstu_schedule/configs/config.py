@@ -21,3 +21,8 @@ ICAL_BOTTOM = '\nEND:VCALENDAR'
 # bmstu
 MAIN_URL = 'https://students.bmstu.ru'
 GROUPS_LIST_URL = '/schedule/list'
+
+
+# logic
+ALL_GROUPS_PARAM = 'all'
+

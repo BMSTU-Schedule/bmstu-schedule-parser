@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='bmstu-schedule',
-    version='1.1.8',
+    version='1.1.9',
     author='George Gabolaev',
     author_email='gabolaev98@gmail.com',
     url='https://github.com/BMSTU-Schedule/bmstu-schedule-parser',
