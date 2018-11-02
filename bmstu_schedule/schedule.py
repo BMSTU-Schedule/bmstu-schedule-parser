@@ -88,7 +88,7 @@ def unload_all_groups(soup, outdir):
     all_urls = soup.find_all(
         'a', 'btn btn-sm btn-default text-nowrap')
     urls_count = len(all_urls)
-    
+
     mapping = []
     for url_id, group_url_button in enumerate(all_urls):
         try:
@@ -111,8 +111,6 @@ def unload_all_groups(soup, outdir):
                 "group": valid_group_code,
                 "url": url
             })
-            if url_id == 4:
-                break
         except Exception as ex:
             self_made_logger.log((ex, url_id, group_url_button), level='ERROR')
 
@@ -146,7 +144,7 @@ def get_urls(group_code, outdir):
 def run(group_code, semester_first_monday, outdir):
     Subject.semester_start_date = semester_first_monday
 
-    for valid_group_code, url in get_urls(group_code, outdir):   
+    for valid_group_code, url in get_urls(group_code, outdir):
         try:
             page_html = requester(url)
         except AttributeError:
