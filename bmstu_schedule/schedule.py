@@ -130,12 +130,19 @@ def get_urls(group_code, outdir):
                 'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')
             }, text=re.compile(r'.*\ {}.*'.format(group_code))
         )
-        valid_group_code = group_code_formatter(group_url_button)
-        self_made_logger.log('{} group found'.format(valid_group_code))
-        yield (
-            valid_group_code,
-            configs.MAIN_URL + group_url_button.attrs['href']
-        )
+
+        try:
+            valid_group_code = group_code_formatter(group_url_button)
+            self_made_logger.log('{} group found'.format(valid_group_code))
+            yield (
+                valid_group_code,
+                configs.MAIN_URL + group_url_button.attrs['href']
+            )
+        except AttributeError:
+            self_made_logger.log(
+                'There is no schedule for the group you specified.',
+                'ERROR')
+            sys.exit(-1)
     else:
         for gcode, url in unload_all_groups(soup, outdir):
             yield gcode, url
@@ -153,7 +160,7 @@ def run(group_code, semester_first_monday, outdir):
                 'ERROR')
             sys.exit(-1)
 
-        self_made_logger.log('Going to your group schedule page')
+        self_made_logger.log('Going to your group schedule page ({})'.format(url))
         soup = bsoup(page_html.content, 'lxml')
         self_made_logger.log('Parsing your schedule')
 
