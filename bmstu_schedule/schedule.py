@@ -126,7 +126,7 @@ def get_urls(group_code, outdir):
 
     if group_code != configs.ALL_GROUPS_PARAM:
         group_url_button = soup.find(
-            re.compile('a'), {
+            'a', {
                 'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')
             }, text=re.compile(r'.*\ {}.*'.format(group_code))
         )
@@ -160,7 +160,7 @@ def run(group_code, semester_first_monday, outdir):
                 'ERROR')
             sys.exit(-1)
 
-        self_made_logger.log('Going to your group schedule page ({})'.format(url))
+        self_made_logger.log('Going to your group schedule page\n{}'.format(url))
         soup = bsoup(page_html.content, 'lxml')
         self_made_logger.log('Parsing your schedule')
 
@@ -181,6 +181,5 @@ def run(group_code, semester_first_monday, outdir):
                 'No such file or directory: {}'.format(outdir), 'ERROR')
             return
 
-        self_made_logger.log('Done!')
-        self_made_logger.log('File saved at {}/{}.ics'.format(outdir, valid_group_code))
+        self_made_logger.log('Done! File saved at {}/{}.ics'.format(outdir, valid_group_code))
         self_made_logger.log('Now you can import it.')
