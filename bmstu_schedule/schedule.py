@@ -64,7 +64,7 @@ def parse_row(cells, day_number, file):
                                 'colspan': '2'
                             } else 1
                         ),
-                        denominator=bool(c // 4)
+                        denominator=(c == 4)
                     )
                 )
             except (IndexError, AttributeError):
@@ -177,3 +177,4 @@ def run(group_code, semester_first_monday, outdir):
         self_made_logger.log('Done!')
         self_made_logger.log('File saved at {}/{}.ics'.format(outdir, valid_group_code))
         self_made_logger.log('Now you can import it.')
+
