@@ -6,7 +6,8 @@ from datetime import timedelta as tdelta
 import textwrap
 import requests
 from bs4 import BeautifulSoup as bsoup
-from bmstu_schedule import configs, logger as self_made_logger
+from bmstu_schedule import configs
+from bmstu_schedule.logger import AwesomeLogger
 
 
 class Subject:
@@ -77,11 +78,17 @@ def requester(url):
     try:
         return requests.get(url)
     except requests.exceptions.ConnectionError:
-        raise ConnectionError('No internet connection')
+        raise AwesomeLogger.shit("No internet connection")
 
 
 def group_code_formatter(group_url):
-    return group_url.text.lstrip()[:11].rstrip()
+    try:
+        return group_url.text.lstrip()[:11].rstrip()
+    except AttributeError:
+        AwesomeLogger.shit(
+            'There is no schedule for the group you specified.')
+        sys.exit(-1)
+
 
 
 def unload_all_groups(soup, outdir):
@@ -93,7 +100,7 @@ def unload_all_groups(soup, outdir):
     for url_id, group_url_button in enumerate(all_urls):
         try:
             valid_group_code = group_code_formatter(group_url_button)
-            self_made_logger.log('Processing {} | {}/{} | [{}%]'.format(
+            AwesomeLogger.info('Processing {} | {}/{} | [{}%]'.format(
                 valid_group_code,
                 url_id,
                 urls_count,
@@ -112,16 +119,16 @@ def unload_all_groups(soup, outdir):
                 "url": url
             })
         except Exception as ex:
-            self_made_logger.log((ex, url_id, group_url_button), level='ERROR')
+            AwesomeLogger.shit((ex, url_id, group_url_button))
 
     with open(outdir + '/mapping.json', 'w', encoding='utf-8') as mapping_file:
         mapping_file.write(json.dumps(mapping, ensure_ascii=False))
 
 
 def get_urls(group_code, outdir):
-    self_made_logger.log('Going to schedules list page')
+    AwesomeLogger.info('Going to schedules list page')
     list_page_response = requester(configs.MAIN_URL + configs.GROUPS_LIST_URL)
-    self_made_logger.log('Parsing your group(s) url(s)')
+    AwesomeLogger.info('Parsing your group(s) url(s)')
     soup = bsoup(list_page_response.content, 'lxml')
 
     if group_code != configs.ALL_GROUPS_PARAM:
@@ -131,31 +138,24 @@ def get_urls(group_code, outdir):
             }, text=re.compile(r'.*\ {}.*'.format(group_code))
         )
         valid_group_code = group_code_formatter(group_url_button)
-        self_made_logger.log('{} group found'.format(valid_group_code))
+        AwesomeLogger.info('{} group found'.format(valid_group_code))
         yield (
             valid_group_code,
             configs.MAIN_URL + group_url_button.attrs['href']
         )
     else:
-        for gcode, url in unload_all_groups(soup, outdir):
-            yield gcode, url
+        yield from unload_all_groups(soup, outdir)
 
 
 def run(group_code, semester_first_monday, outdir):
     Subject.semester_start_date = semester_first_monday
 
     for valid_group_code, url in get_urls(group_code, outdir):
-        try:
-            page_html = requester(url)
-        except AttributeError:
-            self_made_logger.log(
-                'There is no schedule for the group you specified.',
-                'ERROR')
-            sys.exit(-1)
+        AwesomeLogger.info('Going to your group schedule page')
+        page_html = requester(url)
 
-        self_made_logger.log('Going to your group schedule page')
+        AwesomeLogger.info('Parsing your schedule')
         soup = bsoup(page_html.content, 'lxml')
-        self_made_logger.log('Parsing your schedule')
 
         try:
             filename = '{}/{}.ics'.format(outdir, valid_group_code)
@@ -170,11 +170,11 @@ def run(group_code, semester_first_monday, outdir):
 
                 fp.write(textwrap.dedent(configs.ICAL_BOTTOM))
         except FileNotFoundError:
-            self_made_logger.log(
-                'No such file or directory: {}'.format(outdir), 'ERROR')
+            AwesomeLogger.shit(
+                'No such file or directory: {}'.format(outdir))
             return
 
-        self_made_logger.log('Done!')
-        self_made_logger.log('File saved at {}/{}.ics'.format(outdir, valid_group_code))
-        self_made_logger.log('Now you can import it.')
+        AwesomeLogger.info('Done!')
+        AwesomeLogger.info('File saved at {}/{}.ics'.format(outdir, valid_group_code))
+        AwesomeLogger.info('Now you can import it.')
 

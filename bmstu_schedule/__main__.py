@@ -1,7 +1,7 @@
 import argparse as ap
 from datetime import datetime as dt
 import requests
-from bmstu_schedule import configs, logger as self_made_logger, run
+from bmstu_schedule import configs, AwesomeLogger, run, requester
 
 
 def setup_parser():
@@ -39,28 +39,30 @@ def group_code_handler(group_code):
 
 
 def get_api_date():
-    r = requests.get(url=configs.API_URL)
-    self_made_logger.log('Fetching {}'.format(configs.API_URL))
+    AwesomeLogger.info('Fetching {}'.format(configs.API_URL))
+    r = requester(url=configs.API_URL)
     return r.json()['semester_start_date']
 
 
 def date_parser(date):
     try:
         return dt.strptime(date or get_api_date(), configs.DATE_FORMAT)
-    except ValueError:
-        msg = 'date has incorrect format. It must have format: `dd-mm-yyyy`'
+    except Exception:
+        msg = 'date has incorrect format. It must be: "dd-mm-yyyy", got: "{}"'.format(
+            date
+        )
         raise ap.ArgumentTypeError(msg)
 
 
 def main():
     args = setup_parser().parse_args()
-    self_made_logger.log(
+    AwesomeLogger.info(
         "Semester start date: {}".format(args.semester_first_monday.date())
         )
     try:
         run(args.group, args.semester_first_monday, args.outdir)
     except ConnectionError as ex:
-        self_made_logger.log(ex, 'ERROR')
+        AwesomeLogger.shit(ex)
 
 
 if __name__ == "__main__":
