@@ -133,7 +133,7 @@ def get_urls(group_code, outdir):
 
     if group_code != configs.ALL_GROUPS_PARAM:
         group_url_button = soup.find(
-            re.compile('a'), {
+            'a', {
                 'class': re.compile('.*btn btn-sm btn-default text-nowrap.*')
             }, text=re.compile(r'.*\ {}.*'.format(group_code))
         )
