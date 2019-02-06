@@ -32,7 +32,7 @@ def get_urls(group_code, outdir, soup):
     else:
         yield from unload_all_groups(soup, outdir)
 
-        
+
 def unload_all_groups(soup, outdir):
     all_urls = soup.find_all(
         'a', 'btn btn-sm btn-default text-nowrap')

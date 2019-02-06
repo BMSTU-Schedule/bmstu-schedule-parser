@@ -26,3 +26,4 @@ GROUPS_LIST_URL = '/schedule/list'
 # logic
 ALL_GROUPS_PARAM = 'all'
 
+# physical culture
