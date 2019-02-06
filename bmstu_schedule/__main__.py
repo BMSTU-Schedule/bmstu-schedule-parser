@@ -1,7 +1,7 @@
 import argparse as ap
 from datetime import datetime as dt
 import requests
-from bmstu_schedule import configs, AwesomeLogger, run, requester
+from bmstu_schedule import configs, AwesomeLogger, run
 
 
 def setup_parser():
@@ -40,7 +40,7 @@ def group_code_handler(group_code):
 
 def get_api_date():
     AwesomeLogger.info('Fetching {}'.format(configs.API_URL))
-    r = requester(url=configs.API_URL)
+    r = requests.get(url=configs.API_URL)
     return r.json()['semester_start_date']
 
 

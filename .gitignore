@@ -108,3 +108,4 @@ rebuild.sh
 # shit
 .idea/
 .DS_Store
+.vscode/

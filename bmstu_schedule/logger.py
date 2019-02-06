@@ -1,5 +1,6 @@
 from termcolor import colored
 
+# don't judge me for this
 class AwesomeLogger:
 
     @staticmethod
