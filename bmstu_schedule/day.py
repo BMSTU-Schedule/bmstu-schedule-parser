@@ -28,7 +28,6 @@ class Lesson:
 
     def write_ics_to_file(self, file):
         for subject in self.subjects:
-            print(subject.name)
             if re.match(configs.PC_LESSON_KEYREGEX, subject.name):
                 beginning, ending = configs.PC_LESSONS_TIMES_MAPPING[self.start_time]
             else:
