@@ -1,4 +1,5 @@
 import textwrap
+import re
 
 from datetime import timedelta as tdelta
 from bmstu_schedule import configs
@@ -27,12 +28,18 @@ class Lesson:
 
     def write_ics_to_file(self, file):
         for subject in self.subjects:
+            print(subject.name)
+            if re.match(configs.PC_LESSON_KEYREGEX, subject.name):
+                beginning, ending = configs.PC_LESSONS_TIMES_MAPPING[self.start_time]
+            else:
+                beginning, ending = self.start_time, self.end_time
+
             event = configs.ICAL_BODY.format(
                 summary='{} {}'.format(subject.type or '', subject.name),
                 startDate=subject.start_date,
-                startTime=self.start_time,
+                startTime=beginning,
                 endDate=subject.start_date,
-                endTime=self.end_time,
+                endTime=ending,
                 interval=subject.weeks_interval,
                 count=configs.STABLE if subject.weeks_interval == 1
                 else configs.PERIODIC,
