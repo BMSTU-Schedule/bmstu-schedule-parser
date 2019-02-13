@@ -1,5 +1,5 @@
 # <div align="center">BMSTU Schedule</div>
-[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 ### This app can parse your EU schedule page and convert it to .ics format
 #### installation:
