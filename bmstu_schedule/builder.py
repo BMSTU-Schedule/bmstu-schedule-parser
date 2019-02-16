@@ -20,7 +20,7 @@ from bs4 import BeautifulSoup as bsoup
 from bmstu_schedule import configs
 from bmstu_schedule.logger import AwesomeLogger
 from bmstu_schedule.group_page_search import get_urls, unload_all_groups
-from bmstu_schedule.day import parse_row, Subject
+from bmstu_schedule.day import parse_row, Subject, Lesson
 
 
 def run(group_code, semester_first_monday, outdir):
@@ -47,8 +47,9 @@ def run(group_code, semester_first_monday, outdir):
                     day_table = day.contents[1]
                     rows = day_table.findAll('tr')
                     for row in rows[2:]:
-                        parse_row(row.contents, dID, ics)
-
+                        lesson = parse_row(row.contents, dID)
+                        if lesson:
+                            lesson.write_ics_to_file(ics)
                 ics.write(textwrap.dedent(configs.ICAL_BOTTOM))
         except FileNotFoundError:
             AwesomeLogger.shit(

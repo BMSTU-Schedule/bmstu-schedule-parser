@@ -64,7 +64,7 @@ class Lesson:
             file.write(textwrap.dedent(event))
 
 
-def parse_row(cells, day_number, file):
+def parse_row(cells, day_number):
     if len(set(cell for cell in cells[3:5])) > 1:
         subjects = []
         timing = cells[1].string
@@ -86,6 +86,6 @@ def parse_row(cells, day_number, file):
             except (IndexError, AttributeError):
                 pass
 
-        Lesson(timing, subjects).write_ics_to_file(file)
+        return Lesson(timing, subjects)
 
 
