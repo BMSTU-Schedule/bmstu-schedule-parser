@@ -1,3 +1,19 @@
+# bmstu-schedule-parser
+# Copyright (C) 2018 BMSTU Schedule (George Gabolaev)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # time-section
 DATE_FORMAT = '%d-%m-%Y'
 API_URL = 'https://bmstu-schedule.ru/start_date/'
@@ -27,7 +43,7 @@ GROUPS_LIST_URL = '/schedule/list'
 ALL_GROUPS_PARAM = 'all'
 
 # physical culture
-PC_LESSON_KEYREGEX = r'.*спорту.*'
+PC_LESSON_KEYREGEX = r'.*(спорту|Физ воспитание).*'
 PC_LESSONS_TIMES_MAPPING = {
     '083000': ('081500','094500'),
     '101500': ('100000','113000'),

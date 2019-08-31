@@ -14,4 +14,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from .config import *
+from termcolor import colored
+
+# don't judge me for this
+class AwesomeLogger:
+
+    @staticmethod
+    def info(msg):
+        print(colored(msg, 'green'))
+
+    @staticmethod
+    def shit(msg):
+        print(colored(msg, 'red'))

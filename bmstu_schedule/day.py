@@ -1,3 +1,19 @@
+# bmstu-schedule-parser
+# Copyright (C) 2018 BMSTU Schedule (George Gabolaev)
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import textwrap
 import re
 import logging
@@ -51,7 +67,7 @@ class Lesson:
             file.write(textwrap.dedent(event))
 
 
-def parse_row(cells, day_number, file):
+def parse_row(cells, day_number):
     if len(set(cell for cell in cells[3:5])) > 1:
         subjects = []
         timing = cells[1].string
@@ -73,6 +89,6 @@ def parse_row(cells, day_number, file):
             except (IndexError, AttributeError):
                 pass
 
-        Lesson(timing, subjects).write_ics_to_file(file)
+        return Lesson(timing, subjects)
 
 
