@@ -1,16 +1,18 @@
 import json
 import requests
 import re
+import logging
 import sys
 
-from bmstu_schedule.logger import AwesomeLogger
 from bmstu_schedule import configs
+
+log = logging.getLogger("bs")
 
 def group_code_formatter(group_url):
     try:
         return group_url.text.lstrip()[:11].rstrip()
     except AttributeError:
-        AwesomeLogger.shit(
+        log.error(
             'There is no schedule for the group you specified.')
         sys.exit(-1)
 
@@ -24,7 +26,7 @@ def get_urls(group_code, outdir, soup):
             }, text=re.compile(r'.*\ {}.*'.format(group_code))
         )
         valid_group_code = group_code_formatter(group_url_button)
-        AwesomeLogger.info('{} group found'.format(valid_group_code))
+        log.info('{} group found'.format(valid_group_code))
         yield (
             valid_group_code,
             configs.MAIN_URL + group_url_button.attrs['href']
@@ -42,7 +44,7 @@ def unload_all_groups(soup, outdir):
     for url_id, group_url_button in enumerate(all_urls):
         try:
             valid_group_code = group_code_formatter(group_url_button)
-            AwesomeLogger.info('Processing {} | {}/{} | [{}%]'.format(
+            log.info('Processing {} | {}/{} | [{}%]'.format(
                 valid_group_code,
                 url_id,
                 urls_count,
@@ -61,7 +63,7 @@ def unload_all_groups(soup, outdir):
                 "url": url
             })
         except Exception as ex:
-            AwesomeLogger.shit((ex, url_id, group_url_button))
+            log.error((ex, url_id, group_url_button))
 
     with open(outdir + '/mapping.json', 'w', encoding='utf-8') as mapping_file:
         mapping_file.write(json.dumps(mapping, ensure_ascii=False))

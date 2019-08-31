@@ -1,8 +1,12 @@
 import argparse as ap
+import coloredlogs, logging
 from datetime import datetime as dt
 import requests
-from bmstu_schedule import configs, AwesomeLogger, run
+from bmstu_schedule import configs, run
 
+coloredlogs.install(level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s')
+log = logging.getLogger("bs")
 
 def setup_parser():
     parser = ap.ArgumentParser(
@@ -39,7 +43,7 @@ def group_code_handler(group_code):
 
 
 def get_api_date():
-    AwesomeLogger.info('Fetching {}'.format(configs.API_URL))
+    log.info('Fetching {}'.format(configs.API_URL))
     r = requests.get(url=configs.API_URL)
     return r.json()['semester_start_date']
 
@@ -56,13 +60,13 @@ def date_parser(date):
 
 def main():
     args = setup_parser().parse_args()
-    AwesomeLogger.info(
+    log.info(
         "Semester start date: {}".format(args.semester_first_monday.date())
         )
     try:
         run(args.group, args.semester_first_monday, args.outdir)
     except ConnectionError as ex:
-        AwesomeLogger.shit(ex)
+        log.error(ex)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,11 @@
 import textwrap
 import re
+import logging
 
 from datetime import timedelta as tdelta
 from bmstu_schedule import configs
+
+log = logging.getLogger("bs")
 
 class Subject:
     semester_start_date = None

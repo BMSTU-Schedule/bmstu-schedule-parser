@@ -1,6 +1,6 @@
 # time-section
 DATE_FORMAT = '%d-%m-%Y'
-API_URL = 'http://142.93.174.191/start_date/'
+API_URL = 'https://bmstu-schedule.ru/start_date/'
 
 # iCal section
 STABLE = 17

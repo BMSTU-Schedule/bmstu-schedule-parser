@@ -1,25 +1,26 @@
 import textwrap
 import requests
+import logging
 from bs4 import BeautifulSoup as bsoup
 from bmstu_schedule import configs
-from bmstu_schedule.logger import AwesomeLogger
 from bmstu_schedule.group_page_search import get_urls, unload_all_groups
 from bmstu_schedule.day import parse_row, Subject
 
+log = logging.getLogger("bs")
 
 def run(group_code, semester_first_monday, outdir):
     Subject.semester_start_date = semester_first_monday
 
-    AwesomeLogger.info('Going to schedules list page')
+    log.info('Going to schedules list page')
     list_page_response = requests.get(configs.MAIN_URL + configs.GROUPS_LIST_URL)
-    AwesomeLogger.info('Parsing your group(s) url(s)')
+    log.info('Parsing your group(s) url(s)')
     soup = bsoup(list_page_response.content, 'lxml')
 
     for valid_group_code, url in get_urls(group_code, outdir, soup):
-        AwesomeLogger.info('Going to your group schedule page')
+        log.info('Going to your group schedule page')
         page_html = requests.get(url)
 
-        AwesomeLogger.info('Parsing your schedule')
+        log.info('Parsing your schedule')
         soup = bsoup(page_html.content, 'lxml')
 
         try:
@@ -35,11 +36,11 @@ def run(group_code, semester_first_monday, outdir):
 
                 ics.write(textwrap.dedent(configs.ICAL_BOTTOM))
         except FileNotFoundError:
-            AwesomeLogger.shit(
+            log.error(
                 'No such file or directory: {}'.format(outdir))
             return
 
-        AwesomeLogger.info('Done!')
-        AwesomeLogger.info('File saved at {}/{}.ics'.format(outdir, valid_group_code))
-        AwesomeLogger.info('Now you can import it.')
+        log.info('Done!')
+        log.info('File saved at {}/{}.ics'.format(outdir, valid_group_code))
+        log.info('Now you can import it.')
 
