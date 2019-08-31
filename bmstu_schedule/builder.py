@@ -17,6 +17,7 @@
 import textwrap
 import requests
 import logging
+import os
 from bs4 import BeautifulSoup as bsoup
 from bmstu_schedule import configs
 from bmstu_schedule.group_page_search import get_urls, unload_all_groups
@@ -39,8 +40,8 @@ def run(group_code, semester_first_monday, outdir):
         log.info('Parsing your schedule')
         soup = bsoup(page_html.content, 'lxml')
 
+        filename = os.path.join(outdir, valid_group_code+'.ics')
         try:
-            filename = '{}/{}.ics'.format(outdir, valid_group_code)
             with open(filename, 'w', encoding='u8') as ics:
                 ics.writelines(textwrap.dedent(configs.ICAL_HEADER))
 
@@ -58,6 +59,6 @@ def run(group_code, semester_first_monday, outdir):
             return
 
         log.info('Done!')
-        log.info('File saved at {}/{}.ics'.format(outdir, valid_group_code))
+        log.info('File saved at {}'.format(filename))
         log.info('Now you can import it.')
 
