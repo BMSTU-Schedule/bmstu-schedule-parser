@@ -43,7 +43,7 @@ GROUPS_LIST_URL = '/schedule/list'
 ALL_GROUPS_PARAM = 'all'
 
 # physical culture
-PC_LESSON_KEYREGEX = r'.*(спорту|Физ воспитание).*'
+PC_LESSON_KEYREGEX = r'.*(Физическая культура и спорт).*'
 PC_LESSONS_TIMES_MAPPING = {
     '083000': ('081500','094500'),
     '101500': ('100000','113000'),

@@ -18,7 +18,7 @@ from setuptools import setup
 
 setup(
     name='bmstu-schedule',
-    version='1.5.2',
+    version='1.5.3',
     author='George Gabolaev',
     author_email='gabolaev98@gmail.com',
     url='https://github.com/BMSTU-Schedule/bmstu-schedule-parser',
@@ -32,7 +32,6 @@ setup(
         'lxml',
         'bs4',
         'requests',
-        'termcolor',
         'coloredlogs',
     ],
     entry_points={
